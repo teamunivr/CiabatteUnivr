@@ -19,6 +19,8 @@ public class CiabatteUnivr extends Application {
     private AnchorPane rootLayout;
 
     private ObservableList<Prestito> prestiti;
+    private ObservableList<String> powerStripTypes;
+    private ObservableList<Integer> powerStripNumbers;
 
     public static void main(String[] args) {
         launch(args);
@@ -30,6 +32,11 @@ public class CiabatteUnivr extends Application {
         this.primaryStage.setTitle("Ciabatte Univr");
         this.primaryStage.setResizable(false);
         this.prestiti = FXCollections.observableArrayList();
+        this.powerStripTypes = FXCollections.observableArrayList();
+        this.powerStripNumbers = FXCollections.observableArrayList();
+
+        powerStripTypes.addAll("Ciabatta", "Prolunga", "altro");
+        powerStripNumbers.addAll(0, 1, 2, 3, 4, 5, 6);
 
         initRootLayout();
     }
@@ -58,5 +65,11 @@ public class CiabatteUnivr extends Application {
         return prestiti;
     }
 
+    public ObservableList<String> getPowerStripTypes() {
+        return powerStripTypes;
+    }
 
+    public ObservableList<Integer> getPowerStripNumbers() {
+        return powerStripNumbers;
+    }
 }

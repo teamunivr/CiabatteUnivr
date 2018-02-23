@@ -42,7 +42,6 @@
           <TableColumn fx:id="colonnaNome" prefWidth="75.0" text="Nome" />
           <TableColumn fx:id="colonnaCognome" prefWidth="75.0" text="Cognome" />
             <TableColumn fx:id="colonnaNumero" prefWidth="75.0" text="Numero ciabatta" />
-            <TableColumn fx:id="colonnaBottone" prefWidth="75.0" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

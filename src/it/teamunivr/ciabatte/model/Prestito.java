@@ -8,12 +8,12 @@ import javafx.beans.property.StringProperty;
 public class Prestito {
     private final StringProperty nome;
     private final StringProperty cognome;
-    private final IntegerProperty IDCiabatta;
+    private final StringProperty IDCiabatta;
 
-    public Prestito(String nome, String cognome, Integer IDCiabatta) {
+    public Prestito(String nome, String cognome, String IDCiabatta) {
         this.nome = new SimpleStringProperty(nome);
         this.cognome =  new SimpleStringProperty(cognome);
-        this.IDCiabatta =  new SimpleIntegerProperty(IDCiabatta);
+        this.IDCiabatta =  new SimpleStringProperty(IDCiabatta);
     }
 
     public String getNome() {
@@ -40,15 +40,15 @@ public class Prestito {
         this.cognome.set(cognome);
     }
 
-    public int getIDCiabatta() {
+    public String getIDCiabatta() {
         return IDCiabatta.get();
     }
 
-    public IntegerProperty IDCiabattaProperty() {
+    public StringProperty IDCiabattaProperty() {
         return IDCiabatta;
     }
 
-    public void setIDCiabatta(int IDCiabatta) {
+    public void setIDCiabatta(String IDCiabatta) {
         this.IDCiabatta.set(IDCiabatta);
     }
 }
