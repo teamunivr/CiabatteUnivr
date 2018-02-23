@@ -1,6 +1,8 @@
 package it.teamunivr.ciabatte.model;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Prestito {
@@ -8,10 +10,10 @@ public class Prestito {
     private final StringProperty cognome;
     private final IntegerProperty IDCiabatta;
 
-    public Prestito(StringProperty nome, StringProperty cognome, IntegerProperty IDCiabatta) {
-        this.nome = nome;
-        this.cognome = cognome;
-        this.IDCiabatta = IDCiabatta;
+    public Prestito(String nome, String cognome, Integer IDCiabatta) {
+        this.nome = new SimpleStringProperty(nome);
+        this.cognome =  new SimpleStringProperty(cognome);
+        this.IDCiabatta =  new SimpleIntegerProperty(IDCiabatta);
     }
 
     public String getNome() {

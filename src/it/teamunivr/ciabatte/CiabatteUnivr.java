@@ -1,6 +1,10 @@
 package it.teamunivr.ciabatte;
 
+import it.teamunivr.ciabatte.model.Prestito;
+import it.teamunivr.ciabatte.view.CiabatteController;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -14,6 +18,8 @@ public class CiabatteUnivr extends Application {
     private Stage primaryStage;
     private AnchorPane rootLayout;
 
+    private ObservableList<Prestito> prestiti;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -23,6 +29,7 @@ public class CiabatteUnivr extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Ciabatte Univr");
         this.primaryStage.setResizable(false);
+        this.prestiti = FXCollections.observableArrayList();
 
         initRootLayout();
     }
@@ -34,6 +41,9 @@ public class CiabatteUnivr extends Application {
             loader.setLocation(CiabatteUnivr.class.getResource("view/CiabatteView.fxml"));
             rootLayout = loader.load();
 
+            CiabatteController controller = loader.getController();
+            controller.setApp(this);
+
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
@@ -43,4 +53,10 @@ public class CiabatteUnivr extends Application {
             e.printStackTrace();
         }
     }
+
+    public ObservableList<Prestito> getPrestiti() {
+        return prestiti;
+    }
+
+
 }
