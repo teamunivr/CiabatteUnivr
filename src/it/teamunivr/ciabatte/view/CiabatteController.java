@@ -115,14 +115,17 @@ public class CiabatteController {
             );
         }
 
-            //Display button if the row is not empty
-            @Override
-            protected void updateItem(Boolean t, boolean empty) {
-                super.updateItem(t, empty);
-                if(!empty){
-                    setGraphic(cellButton);
-                }
+        //Display button if the row is not empty
+        @Override
+        protected void updateItem(Boolean t, boolean empty) {
+            super.updateItem(t, empty);
+            if(!empty){
+                setGraphic(cellButton);
             }
+            else{
+                setGraphic(null);
+            }
+        }
     }
 
 }
