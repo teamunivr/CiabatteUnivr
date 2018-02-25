@@ -1,6 +1,7 @@
 package it.teamunivr.ciabatte.view;
 
 import it.teamunivr.ciabatte.CiabatteUnivr;
+import it.teamunivr.ciabatte.JsonInterface;
 import it.teamunivr.ciabatte.model.Prestito;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -94,7 +95,7 @@ public class CiabatteController {
         try {
             if (app == null) System.out.println("app null");
             app.getPrestiti().addAll(tmp);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -107,11 +108,12 @@ public class CiabatteController {
 
             //Action when the button is pressed
             cellButton.setOnAction(t -> {
-                // get Selected Item
-                Prestito p = (Prestito) ButtonCell.this.getTableView().getItems().get(ButtonCell.this.getIndex());
-                //remove selected item from the table list
-                app.getPrestiti().remove(p);
-            }
+                        // get Selected Item
+                        Prestito p = (Prestito) ButtonCell.this.getTableView().getItems().get(ButtonCell.this.getIndex());
+                        //remove selected item from the table list
+                        app.getPrestiti().remove(p);
+                        JsonInterface.removeEntry(p);
+                    }
             );
         }
 
@@ -119,10 +121,9 @@ public class CiabatteController {
         @Override
         protected void updateItem(Boolean t, boolean empty) {
             super.updateItem(t, empty);
-            if(!empty){
+            if (!empty) {
                 setGraphic(cellButton);
-            }
-            else{
+            } else {
                 setGraphic(null);
             }
         }

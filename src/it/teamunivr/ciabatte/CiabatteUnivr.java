@@ -35,8 +35,11 @@ public class CiabatteUnivr extends Application {
         this.powerStripTypes = FXCollections.observableArrayList();
         this.powerStripNumbers = FXCollections.observableArrayList();
 
-        powerStripTypes.addAll("Ciabatta", "Prolunga", "altro");
+        powerStripTypes.addAll("Ciabatta", "Prolunga", "Altro");
         powerStripNumbers.addAll(0, 1, 2, 3, 4, 5, 6);
+
+        // loads JSON data file
+        JsonInterface.init();
 
         initRootLayout();
     }
