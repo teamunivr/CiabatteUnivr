@@ -1,14 +1,12 @@
 package it.teamunivr.ciabatte.view;
 
 import it.teamunivr.ciabatte.CiabatteUnivr;
-import it.teamunivr.ciabatte.JsonInterface;
+import it.teamunivr.ciabatte.LoanSave;
 import it.teamunivr.ciabatte.model.Prestito;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
 import com.sun.prism.impl.Disposer.Record;
 import javafx.util.Callback;
@@ -95,6 +93,7 @@ public class CiabatteController {
         try {
             if (app == null) System.out.println("app null");
             app.getPrestiti().addAll(tmp);
+            LoanSave.addEntry(tmp);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,7 +111,7 @@ public class CiabatteController {
                         Prestito p = (Prestito) ButtonCell.this.getTableView().getItems().get(ButtonCell.this.getIndex());
                         //remove selected item from the table list
                         app.getPrestiti().remove(p);
-                        JsonInterface.removeEntry(p);
+                        LoanSave.removeEntry(p);
                     }
             );
         }

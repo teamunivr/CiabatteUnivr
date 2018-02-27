@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,9 +21,7 @@ public class CiabatteUnivr extends Application {
     private ObservableList<String> powerStripTypes;
     private ObservableList<Integer> powerStripNumbers;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    public static void main(String[] args) { launch(args); }
 
     @Override
     public void start(Stage primaryStage) {
@@ -37,9 +34,9 @@ public class CiabatteUnivr extends Application {
 
         powerStripTypes.addAll("Ciabatta", "Prolunga", "Altro");
         powerStripNumbers.addAll(0, 1, 2, 3, 4, 5, 6);
-
+        
         // loads JSON data file
-        JsonInterface.init();
+        LoanSave.init();
 
         initRootLayout();
     }

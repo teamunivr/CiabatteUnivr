@@ -12,13 +12,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 
-public class JsonInterface {
+public class LoanSave {
 
     private static File dataFile;
 
     // initializes the data file looking in the /data-samples/Loans.json
     public static void init() {
-        dataFile = new File("/data-samples/Loans.json");
+        dataFile = new File("/Users/noemurr/git/CiabatteUnivr/data-samples/Loans.json");
 
     }
 
