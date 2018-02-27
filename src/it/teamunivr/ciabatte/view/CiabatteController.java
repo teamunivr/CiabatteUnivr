@@ -5,6 +5,7 @@ import it.teamunivr.ciabatte.model.Prestito;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -62,6 +63,8 @@ public class CiabatteController {
         //Insert Button
         TableColumn col_action = new TableColumn<>("");
 
+
+
         tabellaPrestiti.getColumns().add(col_action);
 
         col_action.setCellValueFactory(
@@ -104,6 +107,8 @@ public class CiabatteController {
         final Button cellButton = new Button("Rientra");
 
         ButtonCell() {
+
+            cellButton.setAlignment(Pos.CENTER_RIGHT);
 
             //Action when the button is pressed
             cellButton.setOnAction(t -> {
