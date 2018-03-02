@@ -1,4 +1,4 @@
-package it.teamunivr.ciabatte;
+package it.teamunivr.powerstrips;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

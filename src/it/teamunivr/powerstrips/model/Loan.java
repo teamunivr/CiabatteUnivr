@@ -1,4 +1,4 @@
-package it.teamunivr.ciabatte.model;
+package it.teamunivr.powerstrips.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

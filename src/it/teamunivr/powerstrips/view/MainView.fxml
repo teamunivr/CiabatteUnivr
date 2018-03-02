@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <AnchorPane maxHeight="400.0" maxWidth="600.0" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="it.teamunivr.ciabatte.view.MainController">
+            fx:controller="it.teamunivr.powerstrips.view.MainController">
    <children>
       <GridPane layoutX="50.0" layoutY="14.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="15.0">
         <columnConstraints>

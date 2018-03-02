@@ -1,6 +1,6 @@
-package it.teamunivr.ciabatte;
+package it.teamunivr.powerstrips;
 
-import it.teamunivr.ciabatte.model.Loan;
+import it.teamunivr.powerstrips.model.Loan;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

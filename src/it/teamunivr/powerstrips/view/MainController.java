@@ -1,8 +1,8 @@
-package it.teamunivr.ciabatte.view;
+package it.teamunivr.powerstrips.view;
 
 import com.sun.prism.impl.Disposer.Record;
-import it.teamunivr.ciabatte.Config;
-import it.teamunivr.ciabatte.model.Loan;
+import it.teamunivr.powerstrips.Config;
+import it.teamunivr.powerstrips.model.Loan;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
