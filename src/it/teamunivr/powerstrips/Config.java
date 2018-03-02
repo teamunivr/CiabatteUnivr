@@ -5,9 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class Config {
-    private Path configDirectory;
+    private Path configFile;
     private LoanSave loanSave;
     private static Config ourInstance;
     private static String error;
@@ -40,46 +38,44 @@ public class Config {
     }
 
     private Config() throws IOException {
+        Path configDir;
         String OS = System.getProperty("os.name").toLowerCase();
         String home = System.getProperty("user.home");
 
         if (OS.contains("win"))
-            configDirectory = java.nio.file.Paths.get(home, "appdata", "univr", "PowerStrips");
+            configDir = java.nio.file.Paths.get(home, "appdata", "univr", "PowerStrips");
         else if (OS.contains("mac"))
-            configDirectory = java.nio.file.Paths.get(home, "Library", "Application Support", "univr", "PowerStrips");
+            configDir = java.nio.file.Paths.get(home, "Library", "Application Support", "univr", "PowerStrips");
         else
-            configDirectory = java.nio.file.Paths.get(home, ".univr", "PowerStrips");
+            configDir = java.nio.file.Paths.get(home, ".univr", "PowerStrips");
 
-        // for testing:
-        //configDirectory = java.nio.file.Paths.get(home, "git", "CiabatteUnivr", "data-samples");
-
-        if (!java.nio.file.Files.exists(configDirectory)) {
+        if (!java.nio.file.Files.exists(configDir)) {
             try {
-                java.nio.file.Files.createDirectories(configDirectory);
-                Path defaultConfigFile = java.nio.file.Paths.get(
-                        Config.class.getResource("resources/DefaultConfig.json").getPath()
-                );
-
-                java.nio.file.Files.copy(
-                        defaultConfigFile, java.nio.file.Paths.get(configDirectory.toString(), "config.json")
-                );
+                java.nio.file.Files.createDirectories(configDir);
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new IOException("the config directory does not exists and cannot be created");
             }
-
-
         }
 
-        if (!java.nio.file.Files.exists(java.nio.file.Paths.get(configDirectory.toString(), "config.json")))
-            throw new IOException("the config file does not exists");
+        if (!java.nio.file.Files.exists(java.nio.file.Paths.get(configDir.toString(), "config.json"))) {
 
-        java.nio.file.Path loansFile = java.nio.file.Paths.get(configDirectory.toString(), "loans.json");
+            InputStream inputStream = Config.class.getResourceAsStream("resources/DefaultConfig.json");
 
-        if (!java.nio.file.Files.exists(loansFile)) {
+            File config = new File(java.nio.file.Paths.get(configDir.toString(), "config.json").toString());
+
+            OutputStream outputStream = new FileOutputStream(config);
+            copyStream(inputStream, outputStream);
+            outputStream.close();
+        }
+
+        configFile = java.nio.file.Paths.get(configDir.toString(), "config.json");
+
+        Path saveFile = java.nio.file.Paths.get(configDir.toString(), "loans.json");
+
+        if (!java.nio.file.Files.exists(saveFile)) {
             try {
-                java.nio.file.Files.createFile(loansFile);
-                FileWriter fileWriter = new FileWriter(loansFile.toString());
+                java.nio.file.Files.createFile(saveFile);
+                FileWriter fileWriter = new FileWriter(saveFile.toString());
                 fileWriter.write("{\n\t\"loans\":[\n\t]\n}");
                 fileWriter.flush();
                 fileWriter.close();
@@ -88,13 +84,12 @@ public class Config {
             }
         }
 
-        loanSave = new LoanSave(loansFile);
+        loanSave = new LoanSave(saveFile);
     }
 
     public HashMap<String, ArrayList<String>> getPowerStrips() throws ParseException {
         HashMap<String, ArrayList<String>> toReturn = new HashMap<>();
         JSONParser parser = new JSONParser();
-        Path configFile = java.nio.file.Paths.get(configDirectory.toString(), "config.json");
 
         try {
             JSONObject jsonObject = (JSONObject) parser.parse(new FileReader(configFile.toString()));
@@ -129,7 +124,7 @@ public class Config {
 
     public static void main(String[] args) {
         Config cfg = Config.getInstance();
-        HashMap<String, ArrayList<String>> map = null;
+        HashMap<String, ArrayList<String>> map;
 
         try {
             map = cfg.getPowerStrips();
@@ -145,5 +140,13 @@ public class Config {
             }
         }
 
+    }
+
+    private static void copyStream(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while ((read = in.read(buffer)) != -1) {
+            out.write(buffer, 0, read);
+        }
     }
 }

@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CiabatteUnivr:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CiabatteUnivr_jar</output-path>
+    <root id="archive" name="CiabatteUnivr.jar">
+      <element id="module-output" name="CiabatteUnivr" />
+      <element id="library" level="project" name="java-json" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/json-simple-1.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
