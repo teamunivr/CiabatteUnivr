@@ -122,6 +122,10 @@ public class MainController {
             lastName.setStyle(null);
         }
 
+        if (comboBoxTypes.getValue() == null || comboBoxIDs.getValue() == null) {
+            return;
+        }
+
         Loan tmp = new Loan(name.getText(), lastName.getText(),
                 String.format("%s: %s", comboBoxTypes.getValue(), comboBoxIDs.getValue()));
 
@@ -152,6 +156,8 @@ public class MainController {
 
                         IDs.get(observableKeys.indexOf(parts[0])).add(parts[1]);
                         FXCollections.sort(IDs.get(observableKeys.indexOf(parts[0])));
+
+                comboBoxIDs.getSelectionModel().selectFirst();
                     }
             );
         }

@@ -3,6 +3,7 @@ package it.teamunivr.powerstrips;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -21,7 +22,7 @@ public class UnivrPowerStripManager extends Application {
         this.primaryStage.setTitle("Ciabatte Univr");
         this.primaryStage.setResizable(false);
 
-        //aggiungi spiegazione
+        primaryStage.getIcons().add(new Image(UnivrPowerStripManager.class.getResourceAsStream("resources/icon.png")));
 
 
         initRootLayout();
