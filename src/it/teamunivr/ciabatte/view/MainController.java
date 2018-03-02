@@ -113,7 +113,14 @@ public class MainController {
 
     @FXML
     public void onAddButton() {
-        if (name.getText().isEmpty() || lastName.getText().isEmpty()) return;
+        if (name.getText().isEmpty() || lastName.getText().isEmpty()) {
+            name.setStyle("-fx-text-box-border: red ; -fx-focus-color: red ;");
+            lastName.setStyle("-fx-text-box-border: red ; -fx-focus-color: red ;");
+            return;
+        } else {
+            name.setStyle(null);
+            lastName.setStyle(null);
+        }
 
         Loan tmp = new Loan(name.getText(), lastName.getText(),
                 String.format("%s: %s", comboBoxTypes.getValue(), comboBoxIDs.getValue()));
@@ -141,7 +148,7 @@ public class MainController {
                         loans.remove(l);
                         String[] parts = l.getPowerStripID().split(": ");
 
-                Config.getInstance().getLoanSave().removeEntry(l);
+                        Config.getInstance().getLoanSave().removeEntry(l);
 
                         IDs.get(observableKeys.indexOf(parts[0])).add(parts[1]);
                         FXCollections.sort(IDs.get(observableKeys.indexOf(parts[0])));

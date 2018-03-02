@@ -51,7 +51,8 @@ public class Config {
             configDirectory = java.nio.file.Paths.get(home, ".univr", "PowerStrips");*/
         // for testing
 
-        configDirectory = java.nio.file.Paths.get(home, "git", "CiabatteUnivr", "data-samples");
+        configDirectory = java.nio.file.Paths.get(home, "projects", "CiabatteUnivr", "data-samples");
+        System.out.println(configDirectory);
 
         if (!java.nio.file.Files.exists(configDirectory))
             throw new IOException("the config directory does not exists");
@@ -59,7 +60,7 @@ public class Config {
         if (!java.nio.file.Files.exists(java.nio.file.Paths.get(configDirectory.toString(), "config.json")))
             throw new IOException("the config file does not exists");
 
-        java.nio.file.Path loansFile = java.nio.file.Paths.get(configDirectory.toString(), "loans.json");
+        java.nio.file.Path loansFile = java.nio.file.Paths.get(configDirectory.toString(), "Loans.json");
 
         if (!java.nio.file.Files.exists(loansFile)) {
             try {
@@ -69,7 +70,7 @@ public class Config {
                 fileWriter.flush();
                 fileWriter.close();
             } catch (IOException e) {
-                throw new IOException("the loans.json file does not exists and cannot be created");
+                throw new IOException("the Loans.json file does not exists and cannot be created");
             }
         }
 
