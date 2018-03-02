@@ -30,6 +30,14 @@ public class Loan {
         return powerStripID.get();
     }
 
+    public String getName() {
+        return name.get();
+    }
+
+    public String getLastName() {
+        return lastName.get();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Loan) {

@@ -10,62 +10,96 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class LoanSave {
 
-    private static File dataFile;
+    private File dataFile;
 
-    // initializes the data file looking in the /data-samples/Loans.json
-    public static void init() {
-        dataFile = new File("/Users/noemurr/git/UnivrPowerStripManager/data-samples/Loans.json");
-
+    public LoanSave(java.nio.file.Path path) {
+        this.dataFile = new File(path.toString());
     }
 
-    private static JSONObject buildJSONObject(Loan p) {
+    private JSONObject buildJSONObject(Loan p) {
         JSONObject obj = new JSONObject();
-        obj.put("name", p.nameProperty());
-        obj.put("surname", p.lastNameProperty());
-        obj.put("item-id", p.powerStripIDProperty());
+        obj.put("name", p.getName());
+        obj.put("surname", p.getLastName());
+        obj.put("item-id", p.getPowerStripID());
         return obj;
     }
 
-    public static void addEntry(Loan p) {
+    public void addEntry(Loan l) {
         try {
-            // write the json object to the dataFile
+            JSONParser parser = new JSONParser();
+            JSONObject loansObject = (JSONObject) parser.parse(new FileReader(dataFile));
+            JSONArray loansArray = (JSONArray) loansObject.get("loans");
+
+            loansArray.add(buildJSONObject(l));
+
             FileWriter fileWriter = new FileWriter(dataFile);
-            fileWriter.write(buildJSONObject(p).toString());
+            fileWriter.write(loansObject.toString());
             fileWriter.flush();
             fileWriter.close();
 
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public static void removeEntry(Loan p) {
+    public void removeEntry(Loan p) {
         JSONParser parser = new JSONParser();
-        JSONArray jsonArray = null;
+        JSONObject jsonObject;
+        JSONArray loansArray = null;
         try {
-            jsonArray = (JSONArray) parser.parse(new FileReader(dataFile));
+            jsonObject = (JSONObject) parser.parse(new FileReader(dataFile));
+            loansArray = (JSONArray) jsonObject.get("loans");
+
         } catch (IOException | ParseException e) {
             e.printStackTrace();
+            return;
         }
 
         try {
-            for (int i = 0; i < jsonArray.size(); i++) {
-                if (jsonArray.get(i).equals(buildJSONObject(p)))
-                    jsonArray.remove(i);
+            for (int i = 0; i < loansArray.size(); i++) {
+                if (loansArray.get(i).equals(buildJSONObject(p)))
+                    loansArray.remove(i);
             }
 
             // writes the whole array in the .json file
             FileWriter fileWriter = new FileWriter(dataFile);
 
-            fileWriter.write(jsonArray.toString());
+            fileWriter.write(jsonObject.toString());
             fileWriter.flush();
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<Loan> getLoans() {
+        ArrayList<Loan> ret = new ArrayList<>();
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject;
+        JSONArray loansArray;
+
+        try {
+            jsonObject = (JSONObject) parser.parse(new FileReader(dataFile));
+            loansArray = (JSONArray) jsonObject.get("loans");
+
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        for (Object loanObject : loansArray) {
+            JSONObject loanJSONObject = (JSONObject) loanObject;
+
+            ret.add(
+                    new Loan((String) loanJSONObject.get("name"), (String) loanJSONObject.get("surname"), (String) loanJSONObject.get("item-id"))
+            );
+        }
+
+        return ret;
     }
 }

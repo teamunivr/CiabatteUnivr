@@ -49,7 +49,7 @@ public class MainController {
     public MainController() {
         Map<String, ArrayList<String>> powerStripMap;
         observableKeys = FXCollections.observableArrayList();
-        loans = FXCollections.observableArrayList();
+        loans = FXCollections.observableArrayList(Config.getInstance().getLoanSave().getLoans());
         IDs = new ArrayList<>();
 
         try {
@@ -63,6 +63,11 @@ public class MainController {
             observableKeys.add(e.getKey());
             IDs.add(FXCollections.observableArrayList(e.getValue()));
             FXCollections.sort(IDs.get(observableKeys.indexOf(e.getKey())));
+        }
+
+        for (Loan l : loans) {
+            String[] parts = l.getPowerStripID().split(": ");
+            IDs.get(observableKeys.indexOf(parts[0])).remove(parts[1]);
         }
     }
 
@@ -94,13 +99,15 @@ public class MainController {
         loansTable.setItems(loans);
 
         comboBoxTypes.setItems(observableKeys);
-        comboBoxTypes.setVisibleRowCount(0);
-
-        comboBoxIDs.setItems(IDs.get(0));
 
         comboBoxTypes.getSelectionModel().selectedItemProperty().addListener(
-                (ChangeListener) (oL, oldValue, newValue) -> comboBoxIDs.setItems(IDs.get(observableKeys.indexOf(newValue)))
+                (ChangeListener) (oL, oldValue, newValue) -> {
+                    comboBoxIDs.setItems(IDs.get(observableKeys.indexOf(newValue)));
+                    comboBoxIDs.getSelectionModel().selectFirst();
+                }
         );
+
+        comboBoxTypes.getSelectionModel().selectFirst();
 
     }
 
@@ -113,9 +120,13 @@ public class MainController {
 
         loans.add(tmp);
 
+        Config.getInstance().getLoanSave().addEntry(tmp);
+
         System.out.println(String.format("Type: %s, ID: %s", comboBoxTypes.getValue(), comboBoxIDs.getValue()));
 
         IDs.get(observableKeys.indexOf(comboBoxTypes.getValue())).remove(comboBoxIDs.getValue());
+
+        comboBoxIDs.getSelectionModel().selectFirst();
     }
 
     //Define the button cell
@@ -126,15 +137,14 @@ public class MainController {
 
             //Action when the button is pressed
             cellButton.setOnAction(t -> {
-                        // get Selected Item
                         Loan l = (Loan) ButtonCell.this.getTableView().getItems().get(ButtonCell.this.getIndex());
                         loans.remove(l);
                         String[] parts = l.getPowerStripID().split(": ");
 
+                Config.getInstance().getLoanSave().removeEntry(l);
+
                         IDs.get(observableKeys.indexOf(parts[0])).add(parts[1]);
                         FXCollections.sort(IDs.get(observableKeys.indexOf(parts[0])));
-                        //remove selected item from the table list
-                        //LoanSave.removeEntry(l);
                     }
             );
         }

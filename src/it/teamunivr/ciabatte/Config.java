@@ -6,6 +6,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -15,19 +16,25 @@ import java.util.Map;
 
 public class Config {
     private Path configDirectory;
+    private LoanSave loanSave;
     private static Config ourInstance;
+    private static String error;
 
     static {
         try {
             ourInstance = new Config();
+            error = null;
         }catch (IOException e){
+            error = e.getMessage();
             ourInstance = null;
         }
     }
 
     public static Config getInstance() throws RuntimeException {
         if (ourInstance == null)
-            throw new RuntimeException("cannot initialize the directory containing the config files");
+            throw new RuntimeException(
+                    String.format("cannot initialize the directory containing the config files. Error: %s", error)
+            );
 
         return ourInstance;
     }
@@ -46,13 +53,27 @@ public class Config {
 
         configDirectory = java.nio.file.Paths.get(home, "git", "CiabatteUnivr", "data-samples");
 
-        if(!java.nio.file.Files.exists(configDirectory)){
+        if (!java.nio.file.Files.exists(configDirectory))
+            throw new IOException("the config directory does not exists");
+
+        if (!java.nio.file.Files.exists(java.nio.file.Paths.get(configDirectory.toString(), "config.json")))
+            throw new IOException("the config file does not exists");
+
+        java.nio.file.Path loansFile = java.nio.file.Paths.get(configDirectory.toString(), "loans.json");
+
+        if (!java.nio.file.Files.exists(loansFile)) {
             try {
-                java.nio.file.Files.createDirectory(configDirectory);
-            }catch (Exception e){
-                throw new IOException();
+                java.nio.file.Files.createFile(loansFile);
+                FileWriter fileWriter = new FileWriter(loansFile.toString());
+                fileWriter.write("{\n\t\"loans\":[\n\t]\n}");
+                fileWriter.flush();
+                fileWriter.close();
+            } catch (IOException e) {
+                throw new IOException("the loans.json file does not exists and cannot be created");
             }
         }
+
+        loanSave = new LoanSave(loansFile);
     }
 
     public HashMap<String, ArrayList<String>> getPowerStrips() throws ParseException {
@@ -88,8 +109,7 @@ public class Config {
     }
 
     public LoanSave getLoanSave(){
-        // TODO
-        return new LoanSave();
+        return loanSave;
     }
 
     public static void main(String[] args){
