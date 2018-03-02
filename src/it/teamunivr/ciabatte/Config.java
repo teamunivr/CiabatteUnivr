@@ -43,15 +43,15 @@ public class Config {
         String OS = System.getProperty("os.name").toLowerCase();
         String home = System.getProperty("user.home");
 
-        /*if (OS.contains("win"))
+        if (OS.contains("win"))
             configDirectory = java.nio.file.Paths.get(home, "appdata", "univr", "PowerStrips");
         else if(OS.contains("mac"))
             configDirectory = java.nio.file.Paths.get(home, "Library", "Application Support", "univr", "PowerStrips");
         else
-            configDirectory = java.nio.file.Paths.get(home, ".univr", "PowerStrips");*/
-        // for testing
+            configDirectory = java.nio.file.Paths.get(home, ".univr", "PowerStrips");
 
-        configDirectory = java.nio.file.Paths.get(home, "git", "CiabatteUnivr", "data-samples");
+        // for testing:
+        //configDirectory = java.nio.file.Paths.get(home, "git", "CiabatteUnivr", "data-samples");
 
         if (!java.nio.file.Files.exists(configDirectory))
             throw new IOException("the config directory does not exists");
