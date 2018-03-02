@@ -1,6 +1,6 @@
 package it.teamunivr.ciabatte;
 
-import it.teamunivr.ciabatte.model.Prestito;
+import it.teamunivr.ciabatte.model.Loan;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -18,19 +18,19 @@ public class LoanSave {
 
     // initializes the data file looking in the /data-samples/Loans.json
     public static void init() {
-        dataFile = new File("/Users/noemurr/git/CiabatteUnivr/data-samples/Loans.json");
+        dataFile = new File("/Users/noemurr/git/UnivrPowerStripManager/data-samples/Loans.json");
 
     }
 
-    private static JSONObject buildJSONObject(Prestito p) {
+    private static JSONObject buildJSONObject(Loan p) {
         JSONObject obj = new JSONObject();
-        obj.put("name", p.nomeProperty());
-        obj.put("surname", p.cognomeProperty());
-        obj.put("item-id", p.IDCiabattaProperty());
+        obj.put("name", p.nameProperty());
+        obj.put("surname", p.lastNameProperty());
+        obj.put("item-id", p.powerStripIDProperty());
         return obj;
     }
 
-    public static void addEntry(Prestito p) {
+    public static void addEntry(Loan p) {
         try {
             // write the json object to the dataFile
             FileWriter fileWriter = new FileWriter(dataFile);
@@ -43,7 +43,7 @@ public class LoanSave {
         }
     }
 
-    public static void removeEntry(Prestito p) {
+    public static void removeEntry(Loan p) {
         JSONParser parser = new JSONParser();
         JSONArray jsonArray = null;
         try {

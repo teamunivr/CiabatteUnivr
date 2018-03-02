@@ -1,7 +1,6 @@
 package it.teamunivr.ciabatte;
 
-import it.teamunivr.ciabatte.model.Prestito;
-import it.teamunivr.ciabatte.view.CiabatteController;
+import it.teamunivr.ciabatte.model.Loan;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,14 +11,14 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class CiabatteUnivr extends Application {
+public class UnivrPowerStripManager extends Application {
 
     private Stage primaryStage;
     private AnchorPane rootLayout;
 
-    private ObservableList<Prestito> prestiti;
+    private ObservableList<Loan> loans;
     private ObservableList<String> powerStripTypes;
-    private ObservableList<Integer> powerStripNumbers;
+    private ObservableList<String> powerStripNumbers;
 
     public static void main(String[] args) { launch(args); }
 
@@ -28,12 +27,11 @@ public class CiabatteUnivr extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Ciabatte Univr");
         this.primaryStage.setResizable(false);
-        this.prestiti = FXCollections.observableArrayList();
+        this.loans = FXCollections.observableArrayList();
         this.powerStripTypes = FXCollections.observableArrayList();
         this.powerStripNumbers = FXCollections.observableArrayList();
 
-        powerStripTypes.addAll("Ciabatta", "Prolunga", "Altro");
-        powerStripNumbers.addAll(0, 1, 2, 3, 4, 5, 6);
+        //aggiungi spiegazione
         
         // loads JSON data file
         LoanSave.init();
@@ -45,11 +43,8 @@ public class CiabatteUnivr extends Application {
         try {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(CiabatteUnivr.class.getResource("view/CiabatteView.fxml"));
+            loader.setLocation(UnivrPowerStripManager.class.getResource("view/MainView.fxml"));
             rootLayout = loader.load();
-
-            CiabatteController controller = loader.getController();
-            controller.setApp(this);
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
@@ -61,8 +56,8 @@ public class CiabatteUnivr extends Application {
         }
     }
 
-    public ObservableList<Prestito> getPrestiti() {
-        return prestiti;
+    public ObservableList<Loan> getLoans() {
+        return loans;
     }
 
     public ObservableList<String> getPowerStripTypes() {
@@ -70,6 +65,7 @@ public class CiabatteUnivr extends Application {
     }
 
     public ObservableList<Integer> getPowerStripNumbers() {
-        return powerStripNumbers;
+        //return powerStripNumbers;
+        return null;
     }
 }

@@ -5,8 +5,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -57,7 +55,7 @@ public class Config {
         }
     }
 
-    public HashMap<String, ArrayList<String>> getPowerStrips() throws FileNotFoundException, ParseException {
+    public HashMap<String, ArrayList<String>> getPowerStrips() throws ParseException {
         HashMap<String, ArrayList<String>> toReturn = new HashMap<>();
         JSONParser parser = new JSONParser();
         Path configFile = java.nio.file.Paths.get(configDirectory.toString(), "config.json");
@@ -100,7 +98,7 @@ public class Config {
 
         try{
             map = cfg.getPowerStrips();
-        } catch (FileNotFoundException | ParseException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
             return;
         }
