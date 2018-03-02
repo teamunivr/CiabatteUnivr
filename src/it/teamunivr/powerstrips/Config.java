@@ -53,8 +53,20 @@ public class Config {
         // for testing:
         //configDirectory = java.nio.file.Paths.get(home, "git", "CiabatteUnivr", "data-samples");
 
-        if (!java.nio.file.Files.exists(configDirectory))
-            throw new IOException("the config directory does not exists");
+        if (!java.nio.file.Files.exists(configDirectory)) {
+            try {
+                java.nio.file.Files.createDirectory(configDirectory);
+                Path defaultConfigFile = java.nio.file.Paths.get(
+                        Config.class.getResource("resources/DefaultConfig.json").getPath()
+                );
+
+                java.nio.file.Files.copy(
+                        defaultConfigFile, java.nio.file.Paths.get(configDirectory.toString(), "config.json")
+                );
+            } catch (IOException e) {
+                throw new IOException("the config directory does not exists and cannot be created");
+            }
+        }
 
         if (!java.nio.file.Files.exists(java.nio.file.Paths.get(configDirectory.toString(), "config.json")))
             throw new IOException("the config file does not exists");
