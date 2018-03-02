@@ -24,7 +24,7 @@ public class Config {
         try {
             ourInstance = new Config();
             error = null;
-        }catch (IOException e){
+        } catch (IOException e) {
             error = e.getMessage();
             ourInstance = null;
         }
@@ -45,7 +45,7 @@ public class Config {
 
         if (OS.contains("win"))
             configDirectory = java.nio.file.Paths.get(home, "appdata", "univr", "PowerStrips");
-        else if(OS.contains("mac"))
+        else if (OS.contains("mac"))
             configDirectory = java.nio.file.Paths.get(home, "Library", "Application Support", "univr", "PowerStrips");
         else
             configDirectory = java.nio.file.Paths.get(home, ".univr", "PowerStrips");
@@ -55,7 +55,7 @@ public class Config {
 
         if (!java.nio.file.Files.exists(configDirectory)) {
             try {
-                java.nio.file.Files.createDirectory(configDirectory);
+                java.nio.file.Files.createDirectories(configDirectory);
                 Path defaultConfigFile = java.nio.file.Paths.get(
                         Config.class.getResource("resources/DefaultConfig.json").getPath()
                 );
@@ -64,8 +64,11 @@ public class Config {
                         defaultConfigFile, java.nio.file.Paths.get(configDirectory.toString(), "config.json")
                 );
             } catch (IOException e) {
+                e.printStackTrace();
                 throw new IOException("the config directory does not exists and cannot be created");
             }
+
+
         }
 
         if (!java.nio.file.Files.exists(java.nio.file.Paths.get(configDirectory.toString(), "config.json")))
@@ -93,20 +96,20 @@ public class Config {
         JSONParser parser = new JSONParser();
         Path configFile = java.nio.file.Paths.get(configDirectory.toString(), "config.json");
 
-        try{
+        try {
             JSONObject jsonObject = (JSONObject) parser.parse(new FileReader(configFile.toString()));
 
             JSONArray powerStripsArray = (JSONArray) jsonObject.get("powerStrips");
             Iterator<JSONObject> PSIterator = powerStripsArray.iterator();
 
-            while (PSIterator.hasNext()){
+            while (PSIterator.hasNext()) {
                 JSONObject tmp = PSIterator.next();
                 String type = (String) tmp.get("type");
                 JSONArray IDs = (JSONArray) tmp.get("ids");
                 Iterator<String> IDsIterator = IDs.iterator();
                 ArrayList<String> tmpIDsArray = new ArrayList<>();
 
-                while(IDsIterator.hasNext()){
+                while (IDsIterator.hasNext()) {
                     tmpIDsArray.add(IDsIterator.next());
                 }
 
@@ -120,15 +123,15 @@ public class Config {
         return toReturn;
     }
 
-    public LoanSave getLoanSave(){
+    public LoanSave getLoanSave() {
         return loanSave;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Config cfg = Config.getInstance();
         HashMap<String, ArrayList<String>> map = null;
 
-        try{
+        try {
             map = cfg.getPowerStrips();
         } catch (ParseException e) {
             e.printStackTrace();
@@ -137,7 +140,7 @@ public class Config {
 
         for (Map.Entry<String, ArrayList<String>> entry : map.entrySet()) {
             System.out.println(entry.getKey() + ":");
-            for (String id: entry.getValue()) {
+            for (String id : entry.getValue()) {
                 System.out.println("\t" + id);
             }
         }
