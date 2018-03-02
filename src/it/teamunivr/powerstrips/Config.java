@@ -42,6 +42,9 @@ public class Config {
     private Config() throws IOException {
         String OS = System.getProperty("os.name").toLowerCase();
         String home = System.getProperty("user.home");
+        Path defaultConfigFile = java.nio.file.Paths.get(
+                Config.class.getResource("resources/DefaultConfig.json").getPath()
+        );
 
         if (OS.contains("win"))
             configDirectory = java.nio.file.Paths.get(home, "appdata", "univr", "PowerStrips");
@@ -50,26 +53,23 @@ public class Config {
         else
             configDirectory = java.nio.file.Paths.get(home, ".univr", "PowerStrips");
 
-        // for testing:
-        //configDirectory = java.nio.file.Paths.get(home, "git", "CiabatteUnivr", "data-samples");
-
         if (!java.nio.file.Files.exists(configDirectory)) {
             try {
                 java.nio.file.Files.createDirectory(configDirectory);
-                Path defaultConfigFile = java.nio.file.Paths.get(
-                        Config.class.getResource("resources/DefaultConfig.json").getPath()
-                );
-
-                java.nio.file.Files.copy(
-                        defaultConfigFile, java.nio.file.Paths.get(configDirectory.toString(), "config.json")
-                );
             } catch (IOException e) {
                 throw new IOException("the config directory does not exists and cannot be created");
             }
         }
 
-        if (!java.nio.file.Files.exists(java.nio.file.Paths.get(configDirectory.toString(), "config.json")))
-            throw new IOException("the config file does not exists");
+        if (!java.nio.file.Files.exists(java.nio.file.Paths.get(configDirectory.toString(), "config.json"))) {
+            try {
+                java.nio.file.Files.copy(
+                        defaultConfigFile, java.nio.file.Paths.get(configDirectory.toString(), "config.json")
+                );
+            } catch (IOException e) {
+                throw new IOException("the config file does not exists and the default cannot be used");
+            }
+        }
 
         java.nio.file.Path loansFile = java.nio.file.Paths.get(configDirectory.toString(), "loans.json");
 
