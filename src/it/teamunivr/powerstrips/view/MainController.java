@@ -124,7 +124,7 @@ public class MainController {
         comboBoxTypes.getSelectionModel().selectFirst();
 
         preferences.setGraphic(
-                new ImageView(new Image(getClass().getResourceAsStream("../resources/preferences-icon.png")))
+                new ImageView(new Image(getClass().getResourceAsStream("/it/teamunivr/powerstrips/resources/preferences-icon.png")))
         );
 
     }

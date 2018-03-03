@@ -25,7 +25,7 @@ public class UnivrPowerStripManager extends Application {
         this.primaryStage.setMinHeight(400);
         this.primaryStage.setMinWidth(600);
 
-        primaryStage.getIcons().add(new Image(UnivrPowerStripManager.class.getResourceAsStream("resources/icon.png")));
+        primaryStage.getIcons().add(new Image(UnivrPowerStripManager.class.getResourceAsStream("/it/teamunivr/powerstrips/resources/icon.png")));
 
 
         initRootLayout();
