@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.io.IOException;
 public class UnivrPowerStripManager extends Application {
 
     private Stage primaryStage;
-    private AnchorPane rootLayout;
+    private GridPane rootLayout;
 
     public static void main(String[] args) { launch(args); }
 
@@ -20,7 +20,10 @@ public class UnivrPowerStripManager extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Ciabatte Univr");
-        this.primaryStage.setResizable(false);
+        this.primaryStage.setMaxWidth(900);
+        this.primaryStage.setMaxHeight(600);
+        this.primaryStage.setMinHeight(400);
+        this.primaryStage.setMinWidth(600);
 
         primaryStage.getIcons().add(new Image(UnivrPowerStripManager.class.getResourceAsStream("resources/icon.png")));
 

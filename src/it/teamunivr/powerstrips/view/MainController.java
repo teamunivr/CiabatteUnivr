@@ -1,6 +1,5 @@
 package it.teamunivr.powerstrips.view;
 
-import com.sun.prism.impl.Disposer.Record;
 import it.teamunivr.powerstrips.Config;
 import it.teamunivr.powerstrips.model.Loan;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -9,10 +8,18 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -39,6 +46,12 @@ public class MainController {
 
     @FXML
     private TextField lastName;
+
+    @FXML
+    private Button preferences;
+
+    @FXML
+    private Pane mainPane;
 
 
     // Reference to the main application.
@@ -86,15 +99,16 @@ public class MainController {
 
         //Insert Button
         TableColumn col_action = new TableColumn<>("");
+        col_action.setStyle("-fx-alignment: CENTER-RIGHT");
 
         loansTable.getColumns().add(col_action);
 
         col_action.setCellValueFactory(
-                (Callback<TableColumn.CellDataFeatures<Record, Boolean>, ObservableValue<Boolean>>) p -> new SimpleBooleanProperty(p.getValue() != null));
+                (Callback<TableColumn.CellDataFeatures<Object, Boolean>, ObservableValue<Boolean>>) p -> new SimpleBooleanProperty(p.getValue() != null));
 
         //Adding the Button to the cell
         col_action.setCellFactory(
-                (Callback<TableColumn<Record, Boolean>, TableCell<Record, Boolean>>) p -> new ButtonCell());
+                (Callback<TableColumn<Object, Boolean>, TableCell<Object, Boolean>>) p -> new ButtonCell());
 
         loansTable.setItems(loans);
 
@@ -108,6 +122,10 @@ public class MainController {
         );
 
         comboBoxTypes.getSelectionModel().selectFirst();
+
+        preferences.setGraphic(
+                new ImageView(new Image(getClass().getResourceAsStream("../resources/preferences-icon.png")))
+        );
 
     }
 
@@ -141,7 +159,7 @@ public class MainController {
     }
 
     //Define the button cell
-    private class ButtonCell extends TableCell<Record, Boolean> {
+    private class ButtonCell extends TableCell<Object, Boolean> {
         final Button cellButton = new Button("Rientra");
 
         ButtonCell() {
@@ -171,6 +189,25 @@ public class MainController {
             } else {
                 setGraphic(null);
             }
+        }
+    }
+
+    @FXML
+    private void onPreferences() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("PreferenceDialog.fxml"));
+
+            Scene scene = new Scene(fxmlLoader.load(), 300, 200);
+            Stage stage = new Stage();
+
+            stage.initOwner(mainPane.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setTitle("Preferences");
+            stage.setScene(scene);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
