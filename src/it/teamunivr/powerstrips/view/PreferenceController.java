@@ -53,6 +53,7 @@ public class PreferenceController {
     private void onOk() {
         Map<String, ArrayList<String>> loanableItems = new HashMap<>();
         Map<String, ArrayList<String>> oldLoanableItems;
+        ArrayList<Loan> modifiedLoans = new ArrayList<>();
         ArrayList<Loan> loanedObjects = Config.getInstance().getLoanSave().getLoans();
 
         for (TreeItem<String> t : root.getChildren()) {
@@ -65,9 +66,22 @@ public class PreferenceController {
             oldLoanableItems = Config.getInstance().getLoanableItems();
 
             if (!oldLoanableItems.equals(loanableItems)) {
-                ArrayList<Loan> modifiedLoans = new ArrayList<>();
 
-                // TODO effettuare il check: se loanedObject contiene o meno elementi il cui id è stato modificato allora inserirli in modifiedLoans
+                for (Map.Entry<String, ArrayList<String>> e : oldLoanableItems.entrySet()) {
+                    if (loanableItems.get(e.getKey()) != null) {
+                        for (String s : e.getValue())
+                            if (!loanableItems.get(e.getKey()).contains(s)) // se un vecchio id non c'è nei nuovi
+                                for (Loan l : loanedObjects)
+                                    if (l.getPowerStripID().contains(s))
+                                        modifiedLoans.add(l);
+                    } else {
+                        for (Loan l : loanedObjects) {
+                            if (l.getPowerStripID().contains(e.getKey()))
+                                modifiedLoans.add(l);
+                        }
+                    }
+
+                }
 
                 if (!modifiedLoans.isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -85,11 +99,17 @@ public class PreferenceController {
 
             Config.getInstance().setLoanableItemes(loanableItems);
 
+            for (Loan l : modifiedLoans)
+                Config.getInstance().getLoanSave().removeEntry(l);
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        if (parentController != null) parentController.setComboBoxes();
+        if (parentController != null) {
+            parentController.setComboBoxes();
+            parentController.updateLoans();
+        }
 
         ((Stage) treeView.getScene().getWindow()).close();
     }
@@ -109,14 +129,24 @@ public class PreferenceController {
 
         @SuppressWarnings("unchecked")
         public TextFieldTreeCell() {
-            MenuItem addMenuItem = new MenuItem("Aggiungi");
+            MenuItem addIDMenuItem = new MenuItem("Aggiungi ID");
+            MenuItem addTypeMenuItem = new MenuItem("Aggiungi Tipologia");
             MenuItem removeMenuItem = new MenuItem("Rimuovi");
-            addMenu.getItems().add(addMenuItem);
+
+            addMenu.getItems().add(addTypeMenuItem);
+            addMenu.getItems().add(addIDMenuItem);
             addMenu.getItems().add(removeMenuItem);
-            addMenuItem.setOnAction((EventHandler) t -> {
-                if (getTreeItem().getParent() != null)
-                    getTreeItem().getParent().getChildren().add(new TreeItem<>("Nuovo oggetto"));
+
+            addTypeMenuItem.setOnAction((EventHandler) t -> root.getChildren().add(new TreeItem<>("Nuova Tipologia")));
+
+            addIDMenuItem.setOnAction((EventHandler) t -> {
+                if (getTreeItem().getParent() == root)
+                    getTreeItem().getChildren().add(new TreeItem<>("Nuovo ID"));
+                else if (getTreeItem().getParent() != null) {
+                    getTreeItem().getParent().getChildren().add(new TreeItem<>("Nuovo ID"));
+                }
             });
+
             removeMenuItem.setOnAction((EventHandler) t -> {
                 if (getTreeItem().getParent() != null)
                     getTreeItem().getParent().getChildren().remove(getTreeItem());
@@ -134,9 +164,18 @@ public class PreferenceController {
                 if (!isEditing()) {
                     setText(getString());
                     setGraphic(getTreeItem().getGraphic());
+
                     if (getTreeItem().getParent() != null) {
                         setContextMenu(addMenu);
                     }
+
+                } else {
+
+                    if (textField != null) {
+                        textField.setText(getString());
+                    }
+                    setText(null);
+                    setGraphic(textField);
                 }
             }
 
@@ -150,9 +189,12 @@ public class PreferenceController {
             if (textField == null) {
                 createTextField();
             }
+
+            textField.setText(getString());
+            textField.selectAll();
+
             setText(null);
             setGraphic(textField);
-            textField.selectAll();
         }
 
         @Override

@@ -71,6 +71,11 @@ public class MainController {
         }
     }
 
+    public void updateLoans() {
+        loans.clear();
+        loans.addAll(Config.getInstance().getLoanSave().getLoans());
+    }
+
     public void setComboBoxes() {
         Map<String, ArrayList<String>> items;
         observableKeys.clear();
