@@ -87,18 +87,17 @@ public class Config {
         loanSave = new LoanSave(saveFile);
     }
 
-    public HashMap<String, ArrayList<String>> getPowerStrips() throws ParseException {
+    @SuppressWarnings("unchecked")
+    public HashMap<String, ArrayList<String>> getLoanableItems() throws ParseException {
         HashMap<String, ArrayList<String>> toReturn = new HashMap<>();
         JSONParser parser = new JSONParser();
 
         try {
             JSONObject jsonObject = (JSONObject) parser.parse(new FileReader(configFile.toString()));
 
-            JSONArray powerStripsArray = (JSONArray) jsonObject.get("powerStrips");
-            Iterator<JSONObject> PSIterator = powerStripsArray.iterator();
+            JSONArray powerStripsArray = (JSONArray) jsonObject.get("items");
 
-            while (PSIterator.hasNext()) {
-                JSONObject tmp = PSIterator.next();
+            for (JSONObject tmp : (Iterable<JSONObject>) powerStripsArray) {
                 String type = (String) tmp.get("type");
                 JSONArray IDs = (JSONArray) tmp.get("ids");
                 Iterator<String> IDsIterator = IDs.iterator();
@@ -122,12 +121,40 @@ public class Config {
         return loanSave;
     }
 
+    @SuppressWarnings("unchecked")
+    public void setLoanableItemes(Map<String, ArrayList<String>> map) throws ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject itemsObject = (JSONObject) parser.parse("{\n\t\"items\":[\n\t]\n}");
+        JSONArray itemsArray = (JSONArray) itemsObject.get("items");
+
+        for (Map.Entry<String, ArrayList<String>> e : map.entrySet()) {
+            JSONObject tmpObject = new JSONObject();
+            JSONArray IDs = new JSONArray();
+
+            IDs.addAll(e.getValue());
+
+            tmpObject.put("type", e.getKey());
+            tmpObject.put("ids", IDs);
+            itemsArray.add(tmpObject);
+        }
+
+        try {
+            FileWriter fileWriter = new FileWriter(configFile.toString());
+            fileWriter.write(itemsObject.toString());
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public static void main(String[] args) {
         Config cfg = Config.getInstance();
         HashMap<String, ArrayList<String>> map;
 
         try {
-            map = cfg.getPowerStrips();
+            map = cfg.getLoanableItems();
         } catch (ParseException e) {
             e.printStackTrace();
             return;

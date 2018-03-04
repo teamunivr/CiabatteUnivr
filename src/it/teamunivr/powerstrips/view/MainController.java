@@ -60,28 +60,37 @@ public class MainController {
     private ObservableList<Loan> loans;
 
     public MainController() {
-        Map<String, ArrayList<String>> powerStripMap;
         observableKeys = FXCollections.observableArrayList();
         loans = FXCollections.observableArrayList(Config.getInstance().getLoanSave().getLoans());
         IDs = new ArrayList<>();
 
+        for (Loan l : loans) {
+            String[] parts = l.getPowerStripID().split(": ");
+            if (observableKeys.indexOf(parts[0]) > 0)
+                IDs.get(observableKeys.indexOf(parts[0])).remove(parts[1]);
+        }
+    }
+
+    public void setComboBoxes() {
+        Map<String, ArrayList<String>> items;
+        observableKeys.clear();
+        IDs.clear();
+
         try {
-            powerStripMap = Config.getInstance().getPowerStrips();
+            items = Config.getInstance().getLoanableItems();
         } catch (ParseException e) {
             e.printStackTrace();
             return;
         }
 
-        for (Map.Entry<String, ArrayList<String>> e : powerStripMap.entrySet()) {
+        for (Map.Entry<String, ArrayList<String>> e : items.entrySet()) {
             observableKeys.add(e.getKey());
             IDs.add(FXCollections.observableArrayList(e.getValue()));
             FXCollections.sort(IDs.get(observableKeys.indexOf(e.getKey())));
         }
 
-        for (Loan l : loans) {
-            String[] parts = l.getPowerStripID().split(": ");
-            IDs.get(observableKeys.indexOf(parts[0])).remove(parts[1]);
-        }
+        comboBoxIDs.getSelectionModel().selectFirst();
+        comboBoxTypes.getSelectionModel().selectFirst();
     }
 
     /**
@@ -112,11 +121,14 @@ public class MainController {
 
         loansTable.setItems(loans);
 
+        setComboBoxes();
+
         comboBoxTypes.setItems(observableKeys);
 
         comboBoxTypes.getSelectionModel().selectedItemProperty().addListener(
                 (ChangeListener) (oL, oldValue, newValue) -> {
-                    comboBoxIDs.setItems(IDs.get(observableKeys.indexOf(newValue)));
+                    if (observableKeys.indexOf(newValue) >= 0)
+                        comboBoxIDs.setItems(IDs.get(observableKeys.indexOf(newValue)));
                     comboBoxIDs.getSelectionModel().selectFirst();
                 }
         );
@@ -198,7 +210,9 @@ public class MainController {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("PreferenceDialog.fxml"));
 
-            Scene scene = new Scene(fxmlLoader.load(), 300, 200);
+            Scene scene = new Scene(fxmlLoader.load(), 500, 400);
+
+            ((PreferenceController) fxmlLoader.getController()).setParentController(this);
             Stage stage = new Stage();
 
             stage.initOwner(mainPane.getScene().getWindow());
