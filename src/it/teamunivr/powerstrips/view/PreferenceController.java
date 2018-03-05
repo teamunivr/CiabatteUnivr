@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,19 +20,35 @@ public class PreferenceController {
     @FXML
     private TreeView<String> treeView;
 
+    @FXML
+    private Button resetDefault;
+
     private TreeItem<String> root;
     private MainController parentController;
 
     @FXML
     private void initialize() {
-        Map<String, ArrayList<String>> itemMap;
+        if (!setTreeView()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Errore");
+            alert.setHeaderText("Non è possibile ottenere la lista degli oggetti prestati");
+            alert.setContentText("Si è verificato un errore leggendo la lista degli oggetti prestati");
+
+            alert.showAndWait();
+        }
+    }
+
+    private boolean setTreeView() {
         root = new TreeItem<>();
+        Map<String, ArrayList<String>> itemMap;
 
         try {
             itemMap = Config.getInstance().getLoanableItems();
         } catch (ParseException e) {
             e.printStackTrace();
-            return;
+            return false;
+        } catch (Config.BadConfigFileException e) {
+            return false;
         }
 
         for (Map.Entry<String, ArrayList<String>> e : itemMap.entrySet()) {
@@ -47,6 +64,8 @@ public class PreferenceController {
         treeView.setShowRoot(false);
         treeView.setCellFactory(p -> new CustomTextFieldTreeCell());
         treeView.setEditable(true);
+
+        return true;
     }
 
     @FXML
@@ -97,7 +116,7 @@ public class PreferenceController {
                 }
             }
 
-            Config.getInstance().setLoanableItemes(loanableItems);
+            Config.getInstance().setLoanableItems(loanableItems);
 
             for (Loan l : modifiedLoans)
                 Config.getInstance().getLoanSave().removeEntry(l);
@@ -121,6 +140,34 @@ public class PreferenceController {
 
     public void setParentController(MainController parentController) {
         this.parentController = parentController;
+    }
+
+    @FXML
+    private void onResetDefault() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Conferma");
+        alert.setHeaderText("Confgermi di voler Resettare il file di config?");
+        alert.setContentText("Attenzione: tutti le tipologie e gli id modificati andranno persi!");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent())
+            if (result.get() == ButtonType.OK) {
+                try {
+                    Config.getInstance().resetConfigFile();
+                    setTreeView();
+                } catch (IOException e) {
+                    Alert alert2 = new Alert(Alert.AlertType.ERROR);
+                    alert2.setTitle("Errore");
+                    alert2.setHeaderText("Impossibile resettare il file di default.");
+                    alert2.setContentText(
+                            "Si consiglia di eliminare il file " + Config.getInstance().getConfigFile().toString()
+                                    + " e di riavviare l'applicazione"
+                    );
+
+                    alert2.showAndWait();
+                }
+            }
+
     }
 
     private final class CustomTextFieldTreeCell extends TextFieldTreeCell<String> {

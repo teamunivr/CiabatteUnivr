@@ -53,8 +53,6 @@ public class MainController {
     @FXML
     private Pane mainPane;
 
-
-    // Reference to the main application.
     private ObservableList<String> observableKeys;
     private ArrayList<ObservableList<String>> IDs;
     private ObservableList<Loan> loans;
@@ -85,6 +83,13 @@ public class MainController {
             items = Config.getInstance().getLoanableItems();
         } catch (ParseException e) {
             e.printStackTrace();
+            return;
+        } catch (Config.BadConfigFileException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Errore di formato nel Config File");
+            alert.setHeaderText("È stato riscontrato un erroe nella lettura del file di config" + e.getConfigFilePath());
+            alert.setContentText("Provare a riconfigurare il config file a mano oppure resettare il config file dalle preferenze");
+            alert.showAndWait();
             return;
         }
 

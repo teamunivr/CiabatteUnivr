@@ -39,15 +39,8 @@ public class Config {
 
     private Config() throws IOException {
         Path configDir;
-        String OS = System.getProperty("os.name").toLowerCase();
-        String home = System.getProperty("user.home");
 
-        if (OS.contains("win"))
-            configDir = java.nio.file.Paths.get(home, "appdata", "univr", "PowerStrips");
-        else if (OS.contains("mac"))
-            configDir = java.nio.file.Paths.get(home, "Library", "Application Support", "univr", "PowerStrips");
-        else
-            configDir = java.nio.file.Paths.get(home, ".univr", "PowerStrips");
+        configDir = getConfigDir();
 
         if (!java.nio.file.Files.exists(configDir)) {
             try {
@@ -58,14 +51,7 @@ public class Config {
         }
 
         if (!java.nio.file.Files.exists(java.nio.file.Paths.get(configDir.toString(), "config.json"))) {
-
-            InputStream inputStream = Config.class.getResourceAsStream("resources/DefaultConfig.json");
-
-            File config = new File(java.nio.file.Paths.get(configDir.toString(), "config.json").toString());
-
-            OutputStream outputStream = new FileOutputStream(config);
-            copyStream(inputStream, outputStream);
-            outputStream.close();
+            resetConfigFile();
         }
 
         configFile = java.nio.file.Paths.get(configDir.toString(), "config.json");
@@ -87,8 +73,34 @@ public class Config {
         loanSave = new LoanSave(saveFile);
     }
 
+    public void resetConfigFile() throws IOException {
+        InputStream inputStream = Config.class.getResourceAsStream("resources/DefaultConfig.json");
+
+        File config = new File(java.nio.file.Paths.get(getConfigDir().toString(), "config.json").toString());
+
+        OutputStream outputStream = new FileOutputStream(config);
+        copyStream(inputStream, outputStream);
+        outputStream.close();
+    }
+
+    private Path getConfigDir() {
+        String OS = System.getProperty("os.name").toLowerCase();
+        String home = System.getProperty("user.home");
+
+        if (OS.contains("win"))
+            return java.nio.file.Paths.get(home, "appdata", "univr", "PowerStrips");
+        else if (OS.contains("mac"))
+            return java.nio.file.Paths.get(home, "Library", "Application Support", "univr", "PowerStrips");
+        else
+            return java.nio.file.Paths.get(home, ".univr", "PowerStrips");
+    }
+
+    public Path getConfigFile() {
+        return configFile;
+    }
+
     @SuppressWarnings("unchecked")
-    public Map<String, ArrayList<String>> getLoanableItems() throws ParseException {
+    public Map<String, ArrayList<String>> getLoanableItems() throws ParseException, BadConfigFileException {
         Map<String, ArrayList<String>> toReturn = new TreeMap<>();
         JSONParser parser = new JSONParser();
 
@@ -96,6 +108,9 @@ public class Config {
             JSONObject jsonObject = (JSONObject) parser.parse(new FileReader(configFile.toString()));
 
             JSONArray powerStripsArray = (JSONArray) jsonObject.get("items");
+
+            if (powerStripsArray == null)
+                throw new BadConfigFileException("bad format in config file: missing \"items\" key", configFile.toString());
 
             for (JSONObject tmp : (Iterable<JSONObject>) powerStripsArray) {
                 String type = (String) tmp.get("type");
@@ -122,7 +137,7 @@ public class Config {
     }
 
     @SuppressWarnings("unchecked")
-    public void setLoanableItemes(Map<String, ArrayList<String>> map) throws ParseException {
+    public void setLoanableItems(Map<String, ArrayList<String>> map) throws ParseException {
         JSONParser parser = new JSONParser();
         JSONObject itemsObject = (JSONObject) parser.parse("{\n\t\"items\":[\n\t]\n}");
         JSONArray itemsArray = (JSONArray) itemsObject.get("items");
@@ -149,6 +164,27 @@ public class Config {
 
     }
 
+    private static void copyStream(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while ((read = in.read(buffer)) != -1) {
+            out.write(buffer, 0, read);
+        }
+    }
+
+    public static final class BadConfigFileException extends RuntimeException {
+        private String configFilePath;
+
+        BadConfigFileException(String message, String configFilePath) {
+            super(message);
+            this.configFilePath = configFilePath;
+        }
+
+        public String getConfigFilePath() {
+            return configFilePath;
+        }
+    }
+
     public static void main(String[] args) {
         Config cfg = Config.getInstance();
         Map<String, ArrayList<String>> map;
@@ -167,13 +203,5 @@ public class Config {
             }
         }
 
-    }
-
-    private static void copyStream(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[1024];
-        int read;
-        while ((read = in.read(buffer)) != -1) {
-            out.write(buffer, 0, read);
-        }
     }
 }

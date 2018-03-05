@@ -17,6 +17,8 @@
     <children>
         <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="2">
             <buttons>
+                <Button fx:id="resetDefault" mnemonicParsing="false" onAction="#onResetDefault" text="Reset Default"
+                        textFill="#fc0000"/>
                 <Button cancelButton="true" mnemonicParsing="false" onAction="#onCancel" text="Annulla"/>
                 <Button mnemonicParsing="false" onAction="#onOk" text="Ok"/>
             </buttons>
