@@ -2,11 +2,11 @@ package it.teamunivr.powerstrips.view;
 
 import it.teamunivr.powerstrips.Config;
 import it.teamunivr.powerstrips.model.Loan;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
+import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class PreferenceController {
 
         treeView.setRoot(root);
         treeView.setShowRoot(false);
-        treeView.setCellFactory(p -> new TextFieldTreeCell());
+        treeView.setCellFactory(p -> new CustomTextFieldTreeCell());
         treeView.setEditable(true);
     }
 
@@ -123,12 +123,22 @@ public class PreferenceController {
         this.parentController = parentController;
     }
 
-    private final class TextFieldTreeCell extends TreeCell<String> {
-        private TextField textField;
+    private final class CustomTextFieldTreeCell extends TextFieldTreeCell<String> {
         private ContextMenu addMenu = new ContextMenu();
 
-        @SuppressWarnings("unchecked")
-        public TextFieldTreeCell() {
+        CustomTextFieldTreeCell() {
+            super(new StringConverter<>() {
+                @Override
+                public String toString(String object) {
+                    return object;
+                }
+
+                @Override
+                public String fromString(String string) {
+                    return string;
+                }
+            });
+
             MenuItem addIDMenuItem = new MenuItem("Aggiungi ID");
             MenuItem addTypeMenuItem = new MenuItem("Aggiungi Tipologia");
             MenuItem removeMenuItem = new MenuItem("Rimuovi");
@@ -137,9 +147,9 @@ public class PreferenceController {
             addMenu.getItems().add(addIDMenuItem);
             addMenu.getItems().add(removeMenuItem);
 
-            addTypeMenuItem.setOnAction((EventHandler) t -> root.getChildren().add(new TreeItem<>("Nuova Tipologia")));
+            addTypeMenuItem.setOnAction(t -> root.getChildren().add(new TreeItem<>("Nuova Tipologia")));
 
-            addIDMenuItem.setOnAction((EventHandler) t -> {
+            addIDMenuItem.setOnAction(t -> {
                 if (getTreeItem().getParent() == root)
                     getTreeItem().getChildren().add(new TreeItem<>("Nuovo ID"));
                 else if (getTreeItem().getParent() != null) {
@@ -147,7 +157,7 @@ public class PreferenceController {
                 }
             });
 
-            removeMenuItem.setOnAction((EventHandler) t -> {
+            removeMenuItem.setOnAction(t -> {
                 if (getTreeItem().getParent() != null)
                     getTreeItem().getParent().getChildren().remove(getTreeItem());
             });
@@ -157,70 +167,9 @@ public class PreferenceController {
         public void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
 
-            if (empty) {
-                setText(null);
-                setGraphic(null);
-            } else {
-                if (!isEditing()) {
-                    setText(getString());
-                    setGraphic(getTreeItem().getGraphic());
-
-                    if (getTreeItem().getParent() != null) {
-                        setContextMenu(addMenu);
-                    }
-
-                } else {
-
-                    if (textField != null) {
-                        textField.setText(getString());
-                    }
-                    setText(null);
-                    setGraphic(textField);
-                }
+            if (!empty && !isEditing() && getTreeItem().getParent() != null) {
+                setContextMenu(addMenu);
             }
-
-            if (getTreeItem() != null) getTreeItem().setValue(getString());
-        }
-
-        @Override
-        public void startEdit() {
-            super.startEdit();
-
-            if (textField == null) {
-                createTextField();
-            }
-
-            textField.setText(getString());
-            textField.selectAll();
-
-            setText(null);
-            setGraphic(textField);
-        }
-
-        @Override
-        public void cancelEdit() {
-            super.cancelEdit();
-
-            setText(getItem());
-            setGraphic(getTreeItem().getGraphic());
-
-        }
-
-        private void createTextField() {
-            textField = new TextField(getString());
-            textField.setOnKeyReleased(t -> {
-
-                if (t.getCode() == KeyCode.ENTER) {
-                    commitEdit(textField.getText());
-                } else if (t.getCode() == KeyCode.ESCAPE) {
-                    cancelEdit();
-                }
-
-            });
-        }
-
-        private String getString() {
-            return getItem() == null ? "" : getItem();
         }
     }
 }
