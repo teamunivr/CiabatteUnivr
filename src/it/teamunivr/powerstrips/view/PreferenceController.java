@@ -39,6 +39,15 @@ public class PreferenceController {
         root = new TreeItem<>();
         Map<String, ArrayList<String>> itemMap;
 
+        MenuItem addType = new MenuItem("Aggiungi Tipologia");
+        addType.setOnAction(t -> root.getChildren().add(new TreeItem<>("Nuova Tipologia")));
+
+        treeView.setContextMenu(new ContextMenu(addType));
+        treeView.setRoot(root);
+        treeView.setShowRoot(false);
+        treeView.setCellFactory(p -> new CustomTextFieldTreeCell());
+        treeView.setEditable(true);
+
         try {
             itemMap = Config.getInstance().getLoanableItems();
         } catch (ParseException e) {
@@ -56,17 +65,6 @@ public class PreferenceController {
 
             root.getChildren().add(tmp);
         }
-
-        MenuItem addType = new MenuItem("Aggiungi Tipologia");
-
-        addType.setOnAction(t -> root.getChildren().add(new TreeItem<>("Nuova Tipologia")));
-
-        treeView.setRoot(root);
-        treeView.setShowRoot(false);
-        treeView.setCellFactory(p -> new CustomTextFieldTreeCell());
-        treeView.setEditable(true);
-
-        treeView.setContextMenu(new ContextMenu(addType));
 
         return true;
     }
@@ -215,10 +213,13 @@ public class PreferenceController {
             addTypeMenuItem.setOnAction(t -> root.getChildren().add(new TreeItem<>("Nuova Tipologia")));
 
             addIDMenuItem.setOnAction(t -> {
-                if (getTreeItem().getParent() == root)
-                    getTreeItem().getChildren().add(new TreeItem<>("Nuovo ID"));
+                TreeItem<String> newItem = new TreeItem<>("Nuovo ID");
+                if (getTreeItem().getParent() == root) {
+                    getTreeItem().setExpanded(true);
+                }
                 else if (getTreeItem().getParent() != null) {
-                    getTreeItem().getParent().getChildren().add(new TreeItem<>("Nuovo ID"));
+                    getTreeItem().getParent().setExpanded(true);
+                    getTreeItem().getParent().getChildren().add(newItem);
                 }
             });
 
