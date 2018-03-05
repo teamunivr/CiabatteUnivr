@@ -57,10 +57,16 @@ public class PreferenceController {
             root.getChildren().add(tmp);
         }
 
+        MenuItem addType = new MenuItem("Aggiungi Tipologia");
+
+        addType.setOnAction(t -> root.getChildren().add(new TreeItem<>("Nuova Tipologia")));
+
         treeView.setRoot(root);
         treeView.setShowRoot(false);
         treeView.setCellFactory(p -> new CustomTextFieldTreeCell());
         treeView.setEditable(true);
+
+        treeView.setContextMenu(new ContextMenu(addType));
 
         return true;
     }
@@ -79,9 +85,14 @@ public class PreferenceController {
         }
 
         try {
-            oldLoanableItems = Config.getInstance().getLoanableItems();
 
-            if (!oldLoanableItems.equals(loanableItems)) {
+            try {
+                oldLoanableItems = Config.getInstance().getLoanableItems();
+            } catch (Config.BadConfigFileException e) {
+                oldLoanableItems = null;
+            }
+
+            if (oldLoanableItems != null && !oldLoanableItems.equals(loanableItems)) {
 
                 for (Map.Entry<String, ArrayList<String>> e : oldLoanableItems.entrySet()) {
                     if (loanableItems.get(e.getKey()) != null) {
@@ -111,6 +122,16 @@ public class PreferenceController {
                         if (result.get() != ButtonType.OK)
                             return;
                 }
+            }
+
+            if (loanableItems.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Errore");
+                alert.setHeaderText("È necessario aggiungere almeno una tipologia");
+                alert.setContentText("È possibile aggiungere le tipologie di oggetti cliccando col tasto destro sulla tree view");
+
+                alert.showAndWait();
+                return;
             }
 
             Config.getInstance().setLoanableItems(loanableItems);

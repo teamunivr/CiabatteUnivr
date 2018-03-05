@@ -169,6 +169,7 @@ public class MainController {
             alert.setContentText("Selezionare una tipologia ed un id");
 
             alert.showAndWait();
+            return;
         }
 
         Loan tmp = new Loan(name.getText(), lastName.getText(),
