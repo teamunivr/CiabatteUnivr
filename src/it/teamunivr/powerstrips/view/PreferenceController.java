@@ -20,9 +20,6 @@ public class PreferenceController {
     @FXML
     private TreeView<String> treeView;
 
-    @FXML
-    private Button resetDefault;
-
     private TreeItem<String> root;
     private MainController parentController;
 

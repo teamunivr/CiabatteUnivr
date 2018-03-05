@@ -163,7 +163,12 @@ public class MainController {
         }
 
         if (comboBoxTypes.getValue() == null || comboBoxIDs.getValue() == null) {
-            return;
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Errore");
+            alert.setHeaderText("Tipologia o id non validi");
+            alert.setContentText("Selezionare una tipologia ed un id");
+
+            alert.showAndWait();
         }
 
         Loan tmp = new Loan(name.getText(), lastName.getText(),

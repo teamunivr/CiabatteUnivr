@@ -29,11 +29,24 @@ public class LoanSave {
         return obj;
     }
 
+    public static void resetLoanSaveFile(String saveFile) throws IOException {
+        FileWriter fileWriter = new FileWriter(saveFile);
+        fileWriter.write("{\n\t\"loans\":[\n\t]\n}");
+        fileWriter.flush();
+        fileWriter.close();
+    }
+
     public void addEntry(Loan l) {
         try {
             JSONParser parser = new JSONParser();
             JSONObject loansObject = (JSONObject) parser.parse(new FileReader(dataFile));
             JSONArray loansArray = (JSONArray) loansObject.get("loans");
+
+            if (loansArray == null) {
+                System.out.println("Error reading save file, Resetting save file.");
+                resetLoanSaveFile(dataFile.toString());
+                loansObject = (JSONObject) parser.parse(new FileReader(dataFile));
+            }
 
             loansArray.add(buildJSONObject(l));
 
@@ -53,8 +66,14 @@ public class LoanSave {
         JSONArray loansArray = null;
         try {
             jsonObject = (JSONObject) parser.parse(new FileReader(dataFile));
-            loansArray = (JSONArray) jsonObject.get("loans");
 
+            if (null == jsonObject.get("loans")) {
+                System.out.println("Error reading save file, Resetting save file.");
+                resetLoanSaveFile(dataFile.toString());
+                jsonObject = (JSONObject) parser.parse(new FileReader(dataFile));
+            }
+
+            loansArray = (JSONArray) jsonObject.get("loans");
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             return;
@@ -85,6 +104,13 @@ public class LoanSave {
 
         try {
             jsonObject = (JSONObject) parser.parse(new FileReader(dataFile));
+
+            if (null == jsonObject.get("loans")) {
+                System.out.println("Error reading save file, Resetting save file.");
+                resetLoanSaveFile(dataFile.toString());
+                jsonObject = (JSONObject) parser.parse(new FileReader(dataFile));
+            }
+
             loansArray = (JSONArray) jsonObject.get("loans");
 
         } catch (IOException | ParseException e) {

@@ -61,10 +61,7 @@ public class Config {
         if (!java.nio.file.Files.exists(saveFile)) {
             try {
                 java.nio.file.Files.createFile(saveFile);
-                FileWriter fileWriter = new FileWriter(saveFile.toString());
-                fileWriter.write("{\n\t\"loans\":[\n\t]\n}");
-                fileWriter.flush();
-                fileWriter.close();
+                LoanSave.resetLoanSaveFile(saveFile.toString());
             } catch (IOException e) {
                 throw new IOException("the loans.json file does not exists and cannot be created");
             }
