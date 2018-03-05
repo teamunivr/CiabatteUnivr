@@ -8,9 +8,9 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Config {
     private Path configFile;
@@ -88,8 +88,8 @@ public class Config {
     }
 
     @SuppressWarnings("unchecked")
-    public HashMap<String, ArrayList<String>> getLoanableItems() throws ParseException {
-        HashMap<String, ArrayList<String>> toReturn = new HashMap<>();
+    public Map<String, ArrayList<String>> getLoanableItems() throws ParseException {
+        Map<String, ArrayList<String>> toReturn = new TreeMap<>();
         JSONParser parser = new JSONParser();
 
         try {
@@ -151,7 +151,7 @@ public class Config {
 
     public static void main(String[] args) {
         Config cfg = Config.getInstance();
-        HashMap<String, ArrayList<String>> map;
+        Map<String, ArrayList<String>> map;
 
         try {
             map = cfg.getLoanableItems();
