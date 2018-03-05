@@ -171,7 +171,7 @@ public class PreferenceController {
         private ContextMenu addMenu = new ContextMenu();
 
         CustomTextFieldTreeCell() {
-            super(new StringConverter<>() {
+            super(new StringConverter<String>() {
                 @Override
                 public String toString(String object) {
                     return object;
